@@ -11,14 +11,22 @@ public class HttpServer {
         serverSocket = new ServerSocket(serverPort);
 
         //extende thread klassen. starter ny separert tråd som ting kjører paralellt. programmet fortsetter mens den kjører separert tråd
-        //skal håndtere clientene
+        //skal håndtere clientene. thread er en variabel
         new Thread(this::handleClient).start();
     }
 
-    private void handleClient() { //skjer det noe feil med clienten. bare skriv ut noe og fortsett
-        try{ //en blokk som lager en ressurs og sier close når den er ferdig
+    private void handleClient() { //skjer det noe feil med clienten. bare skriv ut noe og fortsett. //en blokk som lager en ressurs og sier close når den er ferdig
+        try{
             Socket clientSocket = serverSocket.accept();
-            String response = "HTTP/1.1 404 Not found\r\nContent-Length: 0\r\n\r\n";
+
+            String requestLine[] = HttpClient.readLine(clientSocket).split(" ");
+            String requestTarget = requestLine[1];
+            String responseText = "File not found: " + requestTarget;
+
+            String response = "HTTP/1.1 404 Not found\r\n" +
+                    "Content-Length:" + responseText.length() + "\r\n" +
+                    "\r\n" +
+                    responseText;
             clientSocket.getOutputStream().write(response.getBytes());
         } catch (IOException e) {
             e.printStackTrace();

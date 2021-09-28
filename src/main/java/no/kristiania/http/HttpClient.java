@@ -47,7 +47,8 @@ public class HttpClient {
         return result.toString();
     }
 
-    private String readLine(Socket socket) throws IOException {
+    //public static String
+    static String readLine(Socket socket) throws IOException {
         StringBuilder result = new StringBuilder();
         InputStream in = socket.getInputStream();
 

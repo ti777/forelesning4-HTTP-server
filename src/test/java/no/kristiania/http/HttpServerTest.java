@@ -12,6 +12,12 @@ public class HttpServerTest {
         HttpServer server = new HttpServer(10001);
         HttpClient client  = new HttpClient("localhost", 10001, "/non-existing");
         assertEquals(404, client.getStatusCode());
+    }
 
+    @Test //serveren bør fortelle oss hvilken fil den bør gi oss, og den ikke fantes i tekstmelding
+    void shouldRespondWithRequestTargetIn404() throws IOException {
+        HttpServer server = new HttpServer(10002);
+        HttpClient client  = new HttpClient("localhost", 10002, "/non-existing");
+        assertEquals("File not found: /non-existing", client.getMessageBody());
     }
 }
