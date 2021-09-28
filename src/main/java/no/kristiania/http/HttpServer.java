@@ -45,21 +45,7 @@ public class HttpServer {
     }
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(1962); //åpne server socket, velge port selv
-
-        Socket clientSocket = serverSocket.accept(); //vente på connection fra clienten ved å si accept.
-
-        String html = "Hellå"; //lage eg webside
-        String contentType = "text/plain";
-
-        String response = "HTTP/1.1 200 bra\r\n" +
-                "Content-Length: " + html.getBytes().length + "\r\n" +
-                "Content-Type: " + contentType + "\r\n" +
-                "Connection: close\r\n" +
-                "\r\n" +
-                html;
-
-        clientSocket.getOutputStream().write(response.getBytes()); //må skrive tilbake en string, bytes til teksten
+        new HttpServer(1962);
     }
 
     public int getPort() {
