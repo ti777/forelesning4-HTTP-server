@@ -2,10 +2,12 @@ package no.kristiania.http;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
 
 public class HttpServer {
 
     private final ServerSocket serverSocket;
+    private Path rootDirectory;
 
     public HttpServer(int serverPort) throws IOException {
         serverSocket = new ServerSocket(serverPort);
@@ -23,7 +25,7 @@ public class HttpServer {
             String requestTarget = requestLine[1];
 
             if (requestTarget.equals("/hello")) {
-                String responseText = "Hello world";
+                String responseText = "<p>Hello world</p>";
 
                 String response = "HTTP/1.1 200 OK\r\n" +
                         "Content-Length:" + responseText.length() + "\r\n" +
@@ -51,5 +53,9 @@ public class HttpServer {
 
     public int getPort() {
         return serverSocket.getLocalPort();
+    }
+
+    public void setRoot(Path rootDirectory) {
+        this.rootDirectory = rootDirectory;
     }
 }
