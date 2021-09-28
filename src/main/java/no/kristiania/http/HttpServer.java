@@ -51,4 +51,7 @@ public class HttpServer {
         clientSocket.getOutputStream().write(response.getBytes()); //må skrive tilbake en string, bytes til teksten
     }
 
+    public int getPort() {
+        return serverSocket.getLocalPort();
+    }
 }
