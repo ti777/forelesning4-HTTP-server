@@ -27,6 +27,7 @@ public class HttpServer {
 
                 String response = "HTTP/1.1 200 OK\r\n" +
                         "Content-Length:" + responseText.length() + "\r\n" +
+                        "Content-Type: text/html\r\n" +
                         "\r\n" +
                         responseText;
                 clientSocket.getOutputStream().write(response.getBytes());
