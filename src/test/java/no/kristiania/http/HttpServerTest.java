@@ -5,28 +5,31 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpServerTest {
 
+    private final HttpServer server = new HttpServer(0);
+
+    public HttpServerTest() throws IOException {//konstruktør som kaster exception videre
+    }
+
     @Test
     void shouldReturn404ForUnknownRequestTarget() throws IOException {
-        HttpServer server = new HttpServer(10001);
         HttpClient client  = new HttpClient("localhost", server.getPort(), "/non-existing");
         assertEquals(404, client.getStatusCode());
     }
 
     @Test //serveren bør fortelle oss hvilken fil den bør gi oss, og den ikke fantes i tekstmelding
     void shouldRespondWithRequestTargetIn404() throws IOException {
-        HttpServer server = new HttpServer(10002);
         HttpClient client  = new HttpClient("localhost", server.getPort(), "/non-existing");
         assertEquals("File not found: /non-existing", client.getMessageBody());
     }
 
     @Test
     void shouldRespondWith200forKnownRequestTarget() throws IOException {
-        HttpServer server = new HttpServer(1003);
         HttpClient client = new HttpClient("localhost", server.getPort(), "/hello");
         assertAll(
                 () -> assertEquals(200, client.getStatusCode()),
@@ -37,7 +40,7 @@ public class HttpServerTest {
 
     @Test
     void shouldHandleMoreThanOneRequest() throws IOException {
-        HttpServer server = new HttpServer(0); // starter en server på port 0 betyr velg en vilkårlig port, java velger
+        //HttpServer server = new HttpServer(0); // starter en server på port 0 betyr velg en vilkårlig port, java velger
         assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello"));
         assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello")); //gjør 2 httpRequester skal begge gi 200 statuskode
         //spørr hvilken port serverSocketen startet på
@@ -45,15 +48,13 @@ public class HttpServerTest {
 
     @Test
     void shouldEchoQueryParameter() throws IOException {
-        HttpServer server = new HttpServer(0); //port 0 betyr at java velger en port
         HttpClient client = new HttpClient("localhost", server.getPort(), "/hello?yourName=Tiff");
         assertEquals("<p>Hello Tiff</p>", client.getMessageBody());
 
     }
 
     @Test
-    void shouldServeFiles() throws IOException {
-        HttpServer server= new HttpServer(0); //har en server, sier til server: se etter filer et sted på disk
+    void shouldServeFiles() throws IOException { //har en server, sier til server: se etter filer et sted på disk
         server.setRoot(Paths.get("target/test-classes"));
 
         String fileContent = "A file created at " + LocalTime.now(); //skriver innhold til e fil i den katalogen
@@ -67,7 +68,6 @@ public class HttpServerTest {
 
     @Test
     void shouldUseFileExtensionForContentType() throws IOException {
-        HttpServer server= new HttpServer(0);
         server.setRoot(Paths.get("target/test-classes"));
 
         String fileContent = "<p>Hello</p>";
@@ -76,5 +76,16 @@ public class HttpServerTest {
 
         HttpClient client = new HttpClient("localhost", server.getPort(), "/example-file.html");
         assertEquals("text/html", client.getHeader("Content-Type"));
+    }
+
+    @Test
+    void shouldReturnRolesFromServer() throws IOException {
+        server.setRoles(List.of("Teacher", "Student")); //gitt at servenen vår er satt opp med et sett med roller vi skal returnere, så er det disse
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/roleOptions");
+        assertEquals(
+                "<option value=1>Teacher</option><option value=2>Student</option>",
+                client.getMessageBody()
+        );
     }
 }
