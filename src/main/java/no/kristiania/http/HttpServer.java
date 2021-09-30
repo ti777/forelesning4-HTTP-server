@@ -26,8 +26,22 @@ public class HttpServer {
             String requestLine[] = HttpClient.readLine(clientSocket).split(" ");
             String requestTarget = requestLine[1];
 
-            if (requestTarget.equals("/hello")) {
-                String responseText = "<p>Hello world</p>";
+            int questionsPos = requestTarget.indexOf('?');
+            String fileTarget;
+            String query = null;
+            if (questionsPos != -1){
+                fileTarget = requestTarget.substring(0, questionsPos); //tar biten foran
+                query = requestTarget.substring(questionsPos + 1); //ta colon  : i header. den første etter.
+            }else {
+                fileTarget = requestTarget; //fileTarget skal være lik hele requestTarget
+            }
+
+            if (fileTarget.equals("/hello")) {
+                String yourName = "world";
+                if (query != null){ //hvis query er satt forskjellig fra null
+                    yourName = query.split("=")[1];//splitte den å "=" og det etter = skal være yourName
+                }
+                String responseText = "<p>Hello " + yourName +"</p>";
 
                 String response = "HTTP/1.1 200 OK\r\n" +
                         "Content-Length:" + responseText.length() + "\r\n" +
@@ -36,8 +50,8 @@ public class HttpServer {
                         responseText;
                 clientSocket.getOutputStream().write(response.getBytes());
             } else {
-                 if (rootDirectory != null && Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
-                     String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
+                 if (rootDirectory != null && Files.exists(rootDirectory.resolve(fileTarget.substring(1)))){
+                     String responseText = Files.readString(rootDirectory.resolve(fileTarget.substring(1)));
 
                      String contentType = "text/plain"; //er default
                      if (requestTarget.endsWith(".html")){

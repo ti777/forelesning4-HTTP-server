@@ -36,6 +36,14 @@ public class HttpServerTest {
     }
 
     @Test
+    void shouldEchoQueryParameter() throws IOException {
+        HttpServer server = new HttpServer(0);
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/hello?yourName=Tiff");
+        assertEquals("<p>Hello Tiff</p>", client.getMessageBody());
+
+    }
+
+    @Test
     void shouldServeFiles() throws IOException {
         HttpServer server= new HttpServer(0); //har en server, sier til server: se etter filer et sted på disk
         server.setRoot(Paths.get("target/test-classes"));
