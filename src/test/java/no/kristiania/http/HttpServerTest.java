@@ -41,8 +41,8 @@ public class HttpServerTest {
     @Test
     void shouldHandleMoreThanOneRequest() throws IOException {
         //HttpServer server = new HttpServer(0); // starter en server på port 0 betyr velg en vilkårlig port, java velger
-        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello"));
-        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello")); //gjør 2 httpRequester skal begge gi 200 statuskode
+        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello").getStatusCode());
+        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello").getStatusCode()); //gjør 2 httpRequester skal begge gi 200 statuskode
         //spørr hvilken port serverSocketen startet på
     }
 
