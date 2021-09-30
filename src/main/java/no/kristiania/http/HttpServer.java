@@ -55,7 +55,7 @@ public class HttpServer {
             }
             String responseText = "<p>Hello " + yourName + "</p>";
 
-            writeOkRespons(clientSocket, responseText);
+            writeOKResponse(clientSocket, responseText, "text/html");
         } else if (fileTarget.equals("/api/roleOptions")){ //hvis fileTarget ikke er hello, skal vi lage respons og skrive den tilbake
             String responseText = "";
 
@@ -64,7 +64,8 @@ public class HttpServer {
                 responseText += "<option value=" + (value++) + ">" + role + "</option>";
             }
 
-            writeOkRespons(clientSocket, responseText);
+
+            writeOKResponse(clientSocket, responseText, "text/html");
         } else {
             if (rootDirectory != null && Files.exists(rootDirectory.resolve(fileTarget.substring(1)))){
                 String responseText = Files.readString(rootDirectory.resolve(fileTarget.substring(1)));
@@ -73,14 +74,7 @@ public class HttpServer {
                 if (requestTarget.endsWith(".html")){
                     contentType = "text/html";
                 }
-
-                String response = "HTTP/1.1 200 OK\r\n" +
-                        "Content-Length:" + responseText.length() + "\r\n" +
-                        "Content-Type:" + contentType + "\r\n" +
-                        "Connection: close \r\n" +
-                        "\r\n" +
-                        responseText;
-                clientSocket.getOutputStream().write(response.getBytes());
+                writeOKResponse(clientSocket, responseText, contentType);
                 return;
             }
 
@@ -94,10 +88,10 @@ public class HttpServer {
         }
     }
 
-    private void writeOkRespons(Socket clientSocket, String responseText) throws IOException {
+    private void writeOKResponse(Socket clientSocket, String responseText, String contentType) throws IOException {
         String response = "HTTP/1.1 200 OK\r\n" +
                 "Content-Length:" + responseText.length() + "\r\n" +
-                "Content-Type: text/html\r\n" +
+                "Content-Type:" + contentType + "\r\n" +
                 "Connection: close \r\n" +
                 "\r\n" +
                 responseText;
