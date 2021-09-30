@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="forelesning 4 http server" />
         <module name="forelesning 4 HTTP server" />
+        <module name="forelesning 5 HTTP post" />
       </profile>
     </annotationProcessing>
   </component>
