@@ -18,6 +18,15 @@
             <button>Submit</button>
         </form>
     </main>
-
 </body>
+<script>
+    fetch("/api/rolesOptions").then(function (res){
+        return res.text();
+    }).then(function (text){
+        document.getElementById("roles").innerHTML = text;
+    });
+
+
+
+</script>
 </html>
