@@ -55,14 +55,7 @@ public class HttpServer {
             }
             String responseText = "<p>Hello " + yourName + "</p>";
 
-            String response = "HTTP/1.1 200 OK\r\n" +
-                    "Content-Length:" + responseText.length() + "\r\n" +
-                    "Content-Type: text/html\r\n" +
-                    "Connection: close \r\n" +
-                    "\r\n" +
-                    responseText;
-            clientSocket.getOutputStream().write(response.getBytes());
-
+            writeOkRespons(clientSocket, responseText);
         } else if (fileTarget.equals("/api/roleOptions")){ //hvis fileTarget ikke er hello, skal vi lage respons og skrive den tilbake
             String responseText = "";
 
@@ -71,14 +64,7 @@ public class HttpServer {
                 responseText += "<option value=" + (value++) + ">" + role + "</option>";
             }
 
-
-            String response = "HTTP/1.1 200 OK\r\n" +
-                    "Content-Length:" + responseText.length() + "\r\n" +
-                    "Content-Type: text/html\r\n" +
-                    "Connection: close \r\n" +
-                    "\r\n" +
-                    responseText;
-            clientSocket.getOutputStream().write(response.getBytes());
+            writeOkRespons(clientSocket, responseText);
         } else {
             if (rootDirectory != null && Files.exists(rootDirectory.resolve(fileTarget.substring(1)))){
                 String responseText = Files.readString(rootDirectory.resolve(fileTarget.substring(1)));
@@ -106,6 +92,16 @@ public class HttpServer {
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());
         }
+    }
+
+    private void writeOkRespons(Socket clientSocket, String responseText) throws IOException {
+        String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length:" + responseText.length() + "\r\n" +
+                "Content-Type: text/html\r\n" +
+                "Connection: close \r\n" +
+                "\r\n" +
+                responseText;
+        clientSocket.getOutputStream().write(response.getBytes());
     }
 
     public static void main(String[] args) throws IOException {
