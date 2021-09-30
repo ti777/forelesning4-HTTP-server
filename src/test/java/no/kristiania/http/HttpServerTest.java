@@ -40,10 +40,25 @@ public class HttpServerTest {
         HttpServer server= new HttpServer(0); //har en server, sier til server: se etter filer et sted på disk
         server.setRoot(Paths.get("target/test-classes"));
 
-        String fileContent = "A file created at " + LocalTime.now();
-        Files.write(Paths.get("target/test-claess/examples-file.txt"), fileContent.getBytes()); //legger en fil ned på disk. skriver ut fileContent
+        String fileContent = "A file created at " + LocalTime.now(); //skriver innhold til e fil i den katalogen
+        String exampleFile = "examples-file.txt";
+        Files.write(Paths.get("target/test-classes/" + exampleFile), fileContent.getBytes()); //legger en fil ned på disk. skriver ut fileContent
 
-        HttpClient client = new HttpClient("localhost", server.getPort(), "/example.file.txt"); //finne samme fil
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/" + exampleFile); //finne samme fil
         assertEquals(fileContent, client.getMessageBody()); //henter filen og forventer å tilbake innholdet
+        assertEquals("text/plain", client.getHeader("Content-Type"));
+    }
+
+    @Test
+    void shouldUseFileExtensionForContentType() throws IOException {
+        HttpServer server= new HttpServer(0);
+        server.setRoot(Paths.get("target/test-classes"));
+
+        String fileContent = "<p>Hello</p>";
+        String exampleFile = "examples-file.html";
+        Files.write(Paths.get("target/test-classes/example-file.html"), fileContent.getBytes());
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/example-file.html");
+        assertEquals("text/html", client.getHeader("Content-Type"));
     }
 }
