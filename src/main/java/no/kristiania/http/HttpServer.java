@@ -6,7 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HttpServer {
 
@@ -51,9 +53,12 @@ public class HttpServer {
         if (fileTarget.equals("/hello")) {
             String yourName = "world";
             if (query != null) { //hvis query er satt forskjellig fra null
-                yourName = query.split("=")[1];//splitte den å "=" og det etter = skal være yourName
+                //parse ut query paremeterne
+                Map<String, String> queryMap = parseRequestParameters(query);
+
+                yourName = queryMap.get("lastName") + ", " + queryMap.get("firstName");
             }
-            String responseText = "<p>Hello " + yourName + "</p>";
+            String responseText = "<p>Hello " + yourName + "</p>"; //hente ut variablene
 
             writeOKResponse(clientSocket, responseText, "text/html");
         } else if (fileTarget.equals("/api/roleOptions")){ //hvis fileTarget ikke er hello, skal vi lage respons og skrive den tilbake
@@ -87,6 +92,17 @@ public class HttpServer {
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());
         }
+    }
+
+    private Map<String, String> parseRequestParameters(String query) {
+            Map<String, String> queryMap = new HashMap<>();
+        for (String queryParameter : query.split("&")) { //skille fornavn og etternavn
+            int equalsPos = queryParameter.indexOf('='); //finne hvor "=" er
+            String parameterName = queryParameter.substring(0, equalsPos); //fra start til =
+            String parameterValue = queryParameter.substring(equalsPos+1);
+            queryMap.put(parameterName, parameterValue);
+        }
+        return queryMap;
     }
 
     private void writeOKResponse(Socket clientSocket, String responseText, String contentType) throws IOException {
