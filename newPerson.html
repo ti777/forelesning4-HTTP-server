@@ -14,13 +14,13 @@
         <form action="/api/newPerson" method="post">
             <p><label>First Name:<input type="text" name="firstName"></label></p>
             <p><label>Last Name:<input type="text" name="lastName"></label></p>
-            <p><label>Role: <select name="role"></select></label></p>
+            <p><label>Role: <select id="roles" name="role"></select></label></p>
             <button>Submit</button>
         </form>
     </main>
 </body>
 <script>
-    fetch("/api/rolesOptions").then(function (res){
+    fetch("/api/roleOptions").then(function (res){
         return res.text();
     }).then(function (text){
         document.getElementById("roles").innerHTML = text;
