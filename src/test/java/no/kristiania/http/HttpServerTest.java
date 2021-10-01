@@ -82,7 +82,7 @@ public class HttpServerTest {
     void shouldReturnRolesFromServer() throws IOException {
         server.setRoles(List.of("Teacher", "Student")); //gitt at servenen vår er satt opp med et sett med roller vi skal returnere, så er det disse
 
-        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/roleOptions");
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/rolesOptions");
         assertEquals(
                 "<option value=1>Teacher</option><option value=2>Student</option>",
                 client.getMessageBody()

@@ -56,7 +56,7 @@ public class HttpServer {
             String responseText = "<p>Hello " + yourName + "</p>";
 
             writeOKResponse(clientSocket, responseText, "text/html");
-        } else if (fileTarget.equals("/api/roleOptions")){ //hvis fileTarget ikke er hello, skal vi lage respons og skrive den tilbake
+        } else if (fileTarget.equals("/api/rolesOptions")){ //hvis fileTarget ikke er hello, skal vi lage respons og skrive den tilbake
             String responseText = "";
 
             int value = 1;
