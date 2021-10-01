@@ -37,7 +37,7 @@ public class HttpServer {
     private void handleClient() throws IOException { //skjer det noe feil med clienten. bare skriv ut noe og fortsett. //en blokk som lager en ressurs og sier close når den er ferdig
         Socket clientSocket = serverSocket.accept();
 
-        String requestLine[] = HttpClient.readLine(clientSocket).split(" ");
+        String requestLine[] = HttpMessage.readLine(clientSocket).split(" ");
         String requestTarget = requestLine[1];
 
         int questionsPos = requestTarget.indexOf('?');
