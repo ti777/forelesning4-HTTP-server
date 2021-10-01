@@ -10,16 +10,18 @@ public class HttpClient {
     private final HashMap<String, String> headerFields = new HashMap<>();
     private final String messageBody;
 
+    private HttpMessage httpMessage;
 
     public HttpClient(String host, int port, String requestTarget) throws IOException {
         Socket socket = new Socket(host, port);
 
-        socket.getOutputStream().write(
-                ("GET " + requestTarget + " HTTP/1.1\r\n" +
-                        "Connection: close\r\n" +
+        String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
                         "Host: " + host + "\r\n" +
-                        "\r\n").getBytes()
-        );
+                        "Connection: close\r\n" +
+                        "\r\n";
+        socket.getOutputStream().write(request.getBytes());
+
+
 
         String statusLine = readLine(socket);
         this.statusCode = Integer.parseInt(statusLine.split(" ")[1]);
