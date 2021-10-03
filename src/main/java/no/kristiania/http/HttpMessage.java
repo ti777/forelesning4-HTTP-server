@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HttpMessage {
     public String startLine;
@@ -13,7 +14,10 @@ public class HttpMessage {
     public HttpMessage(Socket socket) throws IOException {
         startLine = HttpMessage.readLine(socket);
         readHeaders(socket);
-        messageBody = HttpMessage.readCharacters(socket, getContentLength());
+
+        if (headerFields.containsKey("Content-Length")) { //hvis vi har content length kan vi parse messagebody, hvis ikke kan den være tom
+            messageBody = HttpMessage.readCharacters(socket, getContentLength());
+        }
     }
 
     public int getContentLength() {
@@ -33,6 +37,18 @@ public class HttpMessage {
         }
 
         return result.toString();
+    }
+
+    private Map<String, String> parseRequestParameters(String query) {
+        Map<String, String> queryMap = new HashMap<>();
+
+        for (String queryParameter : query.split("&")) { //skille fornavn og etternavn
+            int equalsPos = queryParameter.indexOf('='); //finne hvor "=" er
+            String parameterName = queryParameter.substring(0, equalsPos); //fra start til =
+            String parameterValue = queryParameter.substring(equalsPos + 1);
+            queryMap.put(parameterName, parameterValue);
+        }
+        return queryMap;
     }
 
     private void readHeaders(Socket socket) throws IOException {
